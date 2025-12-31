@@ -505,6 +505,22 @@
         font-size: 20px;
       }
     }
+
+    /* Fix iPhone date input pushing layout */
+  .row > div { min-width: 0; }
+
+  @media (max-width: 420px) {
+    /* only stack Date + Amount row */
+    .row.row-date-amount {
+      grid-template-columns: 1fr;
+    }
+
+    input[type="date"]{
+      font-size: 14px;
+      text-align: left;
+    }
+  }
+
   </style>
 </head>
 <body>
@@ -601,7 +617,7 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row row-date-amount">
           <div>
             <label>Date</label>
             <input id="payDate" type="date" />
