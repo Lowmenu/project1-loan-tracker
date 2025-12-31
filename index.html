@@ -1303,6 +1303,8 @@ function deletePerson(personId) {
 
   saveState(state);
 
+  renderAll();
+  showView('viewPeople');
   alert(`🗑 ${person.name} deleted`);
   showView('viewPeople');
 }
