@@ -1,0 +1,1738 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#6366f1" />
+  <title>💰 Loan Tracker Pro</title>
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTG9hbiBUcmFja2VyIFBybyIsInNob3J0X25hbWUiOiJMb2FuVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjM2NmYxIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IGZpbGw9JyUyMzYzNjZmMScgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyUzRSVGMCU5RiU5MiVCMCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --card-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      padding-bottom: 80px;
+      color: #1f2937;
+      line-height: 1.5;
+    }
+    
+    /* Header */
+    .app-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 16px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .app-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .app-header .subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+    
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .card:active {
+      transform: scale(0.98);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .stat-card.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .stat-card.warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    /* Navigation Menu */
+    .nav-menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .nav-btn {
+      background: white;
+      border: none;
+      border-radius: 16px;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .nav-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .nav-btn .icon {
+      font-size: 32px;
+    }
+    
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+    }
+    
+    /* Form Elements */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+      margin-top: 12px;
+    }
+    
+    label:first-of-type {
+      margin-top: 0;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.2s;
+      background: #f9fafb;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    /* Buttons */
+    button {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+    
+    button.btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    button.btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+    }
+    
+    button.btn-secondary {
+      background: white;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+    }
+    
+    button.btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    button.btn-back {
+      width: auto;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #374151;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Pills & Badges */
+    .pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f3f4f6;
+      color: #374151;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .pill.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .pill.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .pill.primary {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    
+    /* Alert Boxes */
+    .alert {
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    
+    .alert.warning {
+      background: #fef3c7;
+      border: 2px solid #fbbf24;
+      color: #92400e;
+    }
+    
+    .alert.info {
+      background: #dbeafe;
+      border: 2px solid #60a5fa;
+      color: #1e40af;
+    }
+    
+    .alert-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    
+    th {
+      background: #f9fafb;
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .right {
+      text-align: right;
+    }
+    
+    /* Utilities */
+    .muted {
+      color: #6b7280;
+      font-size: 13px;
+    }
+    
+    .flex {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .space-between {
+      justify-content: space-between;
+    }
+    
+    .click {
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    .click:active {
+      opacity: 0.7;
+    }
+    
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    /* Collection List */
+    .collection-item {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--warning);
+    }
+    
+    .collection-item-name {
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 4px;
+    }
+    
+    /* Person List Item */
+    .person-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--card-shadow);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .person-item:active {
+      transform: scale(0.98);
+    }
+    
+    .person-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    /* Loan Block */
+    .loan-block {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .loan-block.closed {
+      border-left-color: #9ca3af;
+      opacity: 0.7;
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      z-index: 100;
+    }
+    
+    .bottom-nav-btn {
+      background: transparent;
+      border: none;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: #9ca3af;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0;
+      transition: all 0.2s;
+    }
+    
+    .bottom-nav-btn .icon {
+      font-size: 24px;
+    }
+    
+    .bottom-nav-btn.active {
+      color: var(--primary);
+    }
+    
+    /* Hide views */
+    .view {
+      display: none;
+    }
+    
+    .view.active {
+      display: block;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+    }
+    
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    /* Loading Animation */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    /* Responsive */
+    @media (max-width: 400px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stat-value {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="app-header">
+    <h1>💰 Loan Tracker Pro</h1>
+    <div class="subtitle">Manage your loans with ease</div>
+  </div>
+
+  <div class="container">
+    <!-- HOME VIEW -->
+    <div id="viewHome" class="view active">
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Given</div>
+          <div class="stat-value" id="homeTotalGiven">RM0</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-label">Outstanding</div>
+          <div class="stat-value" id="homeTotalOutstanding">RM0</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-label">Total Paid</div>
+          <div class="stat-value" id="homeTotalPaid">RM0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active People</div>
+          <div class="stat-value" id="homeTotalPeople">0</div>
+        </div>
+      </div>
+
+      <!-- Collection Today -->
+      <div class="card" id="homeCollectionCard">
+        <div class="card-title">📅 Collection Today</div>
+        <div id="homeCollectionHint" class="muted"></div>
+        <div id="homeCollectionList"></div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-title">⚡ Quick Actions</div>
+        <div class="nav-menu">
+          <button class="nav-btn primary" id="navAddLoan">
+            <span class="icon">➕</span>
+            <span>Add Loan</span>
+          </button>
+          <button class="nav-btn primary" id="navCollect">
+            <span class="icon">💰</span>
+            <span>Record Payment</span>
+          </button>
+          <button class="nav-btn" id="navPeople">
+            <span class="icon">👥</span>
+            <span>View People</span>
+          </button>
+          <button class="nav-btn" id="navSettings">
+            <span class="icon">⚙️</span>
+            <span>Settings</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEOPLE VIEW -->
+    <div id="viewPeople" class="view">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">👥 People</div>
+          <button class="btn-secondary" style="width: auto; padding: 8px 16px; margin: 0;" id="btnAddPersonModal">+ Add</button>
+        </div>
+        <div id="peopleList"></div>
+      </div>
+    </div>
+
+    <!-- COLLECT VIEW -->
+    <div id="viewCollect" class="view">
+      <div class="card">
+        <div class="card-title">💰 Record Payment</div>
+        
+        <label>Person</label>
+        <select id="payPerson"></select>
+
+        <div class="row">
+          <div>
+            <label>Loan</label>
+            <select id="payLoan"></select>
+          </div>
+          <div>
+            <label>Slot</label>
+            <select id="paySlot">
+              <option value="EARLY">Early</option>
+              <option value="MID">Mid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Date</label>
+            <input id="payDate" type="date" />
+          </div>
+          <div>
+            <label>Amount (RM)</label>
+            <input id="payAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="100.00" />
+          </div>
+        </div>
+
+        <button class="btn-primary" id="addPaymentBtn">💸 Record Payment</button>
+        
+        <div class="alert info" style="margin-top: 12px;">
+          <div class="muted">💡 Tip: Always pay older loans first to avoid warnings.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD LOAN VIEW -->
+    <div id="viewAddLoan" class="view">
+      <!-- Add Loan Card -->
+      <div class="card">
+        <div class="card-title">📝 Add Loan / Rollover</div>
+        
+        <div class="row">
+          <div>
+            <label>Person</label>
+            <select id="loanPerson"></select>
+          </div>
+          <div>
+            <label>Mode</label>
+            <select id="loanMode">
+              <option value="NEW">New Loan</option>
+              <option value="ROLLOVER">Rollover</option>
+            </select>
+          </div>
+        </div>
+
+      <!-- Add Person Card -->
+      <div class="card">
+        <div class="card-title">👤 Add New Person</div>
+        <label>Name</label>
+        <input id="personName" placeholder="e.g. Ali" />
+        <button class="btn-primary" id="addPersonBtn">Add Person</button>
+      </div>
+
+        <div id="rolloverBox" style="display:none;">
+          <div class="alert warning">
+            <div class="alert-title">🔄 Rollover Mode</div>
+            <div class="muted">Select the old active loan to close</div>
+            <label>Old loan to cover</label>
+            <select id="coverLoan"></select>
+            <div class="muted" id="coverLoanInfo" style="margin-top: 6px;"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Start Date</label>
+            <input id="loanStartDate" type="date" />
+          </div>
+          <div>
+            <label>Principal (RM)</label>
+            <input id="loanPrincipal" type="number" inputmode="decimal" min="0" step="0.01" placeholder="1000.00" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Collection Term</label>
+            <select id="loanTerm">
+              <option value="EARLY">Early</option>
+              <option value="MID">Mid</option>
+            </select>
+          </div>
+          <div>
+            <label>Installment (RM)</label>
+            <input id="loanInstAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="200.00" />
+          </div>
+        </div>
+
+        <label>Planned Times (Installments)</label>
+        <input id="loanPlannedTimes" type="number" min="1" step="1" placeholder="6" />
+
+        <label>Already Paid Times (for migration)</label>
+        <input id="loanAlreadyPaidTimes" type="number" min="0" step="1" placeholder="0" />
+
+        <label>Migration Note (optional)</label>
+        <input id="loanMigrationNote" placeholder="e.g. Paid 2 times before app" />
+
+        <label>Already Missed Times (for migration)</label>
+        <input id="loanAlreadyMissedTimes" type="number" min="0" step="1" placeholder="0" />
+
+        <label>Tracking Start Date</label>
+        <input id="loanTrackingStartDate" type="date" />
+
+        <label>Notes (optional)</label>
+        <textarea id="loanNotes" placeholder="Add any notes..."></textarea>
+
+        <div id="preLoanWarning" style="display:none;"></div>
+
+        <button class="btn-primary" id="addLoanBtn">💾 Save Loan</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div id="viewSettings" class="view">
+      <div class="card">
+        <div class="card-title">⚙️ Settings</div>
+        
+        <div class="alert info">
+          <div class="alert-title">ℹ️ About This App</div>
+          <div class="muted">Loan Tracker Pro v1.0 - All data is stored locally on your device.</div>
+        </div>
+
+        <button class="btn-secondary" id="exportDataBtn">📤 Export Data (JSON)</button>
+        <button class="btn-danger" id="resetDataBtn">🗑️ Reset All Data</button>
+        
+        <div class="muted" style="margin-top: 16px; text-align: center;">
+          Made with ❤️ for better loan management
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSON DETAIL VIEW -->
+    <div id="viewPersonDetail" class="view">
+      <button class="btn-back" id="closePersonDetail">← Back</button>
+      
+      <div class="card">
+        <div class="person-name" id="pdName"></div>
+        <div class="muted" id="pdSummary"></div>
+        
+        <div style="margin-top: 16px;">
+          <div class="card-title">📊 Loans</div>
+          <div id="pdLoans"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <button class="bottom-nav-btn active" data-view="viewHome">
+      <span class="icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-btn" data-view="viewPeople">
+      <span class="icon">👥</span>
+      <span>People</span>
+    </button>
+    <button class="bottom-nav-btn" data-view="viewCollect">
+      <span class="icon">💰</span>
+      <span>Collect</span>
+    </button>
+    <button class="bottom-nav-btn" data-view="viewSettings">
+      <span class="icon">⚙️</span>
+      <span>Settings</span>
+    </button>
+  </div>
+
+<script>
+/** ======= Storage ======= */
+const STORAGE_KEY = "loan_tracker_pro_v1";
+const nowISODate = () => new Date().toISOString().slice(0,10);
+
+let lastView = 'viewPeople';
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return { people: [], loans: [] };
+  try { return JSON.parse(raw); } catch { return { people: [], loans: [] }; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/** ======= Helpers ======= */
+function uid(prefix="id") {
+  return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+}
+
+function rm(n) {
+  const x = Number(n || 0);
+  return "RM" + x.toFixed(2);
+}
+
+function monthKey(dateStr) {
+  return dateStr.slice(0,7);
+}
+
+function monthsBetweenInclusive(startDateStr, endDateStr) {
+  const [sy, sm] = startDateStr.slice(0,7).split("-").map(Number);
+  const [ey, em] = endDateStr.slice(0,7).split("-").map(Number);
+  return (ey - sy) * 12 + (em - sm) + 1;
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+/** ======= Domain Logic ======= */
+function calcLoan(loan, todayStr = nowISODate()) {
+  const payments = loan.payments || [];
+  const totalPaid = payments.reduce((s,p) => s + Number(p.amount || 0), 0);
+
+  const trackFrom = loan.trackingStartDate || loan.startDate;
+  const expectedMonths = monthsBetweenInclusive(trackFrom, todayStr);
+  const paidMonthSet = new Set(payments.map(p => monthKey(p.date)));
+  const paidMonths = paidMonthSet.size;
+
+  const autoMissed = Math.max(0, expectedMonths - paidMonths);
+  const missed = Number(loan.alreadyMissedTimes || 0) + autoMissed;
+
+  const plannedTimes = Number(loan.plannedTimes || 0);
+  const instAmount = Number(loan.installmentAmount || 0);
+
+  const effectiveTotalTimes = plannedTimes + missed;
+  const effectiveOutstanding = (instAmount * effectiveTotalTimes) - totalPaid;
+
+  const principal = Number(loan.principal || 0);
+  const baseOutstanding = principal - totalPaid;
+
+  return {
+    totalPaid,
+    expectedMonths,
+    paidMonths,
+    missed,
+    effectiveTotalTimes,
+    effectiveOutstanding,
+    principal,
+    baseOutstanding
+  };
+}
+
+function personOutstanding(state, personId) {
+  const loans = state.loans.filter(l => l.personId === personId && l.status === "ACTIVE");
+  const sums = loans.map(l => calcLoan(l));
+  return sums.reduce((s,x) => s + Math.max(0, x.effectiveOutstanding), 0);
+}
+
+function currentCollectionWindow(today = new Date()) {
+  const d = today.getDate();
+  if (d >= 7 && d <= 15) return "EARLY";
+  if (d >= 22 && d <= 29) return "MID";
+  return null;
+}
+
+function hasPaymentInMonth(loan, yyyyMm) {
+  return (loan.payments || []).some(p => (p.date || "").slice(0,7) === yyyyMm);
+}
+
+/** ======= View Management ======= */
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId)?.classList.add('active');
+
+  document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewId);
+  });
+
+  window.scrollTo(0, 0);
+}
+
+
+/** ======= Render Functions ======= */
+function renderAll() {
+  const state = loadState();
+  
+  renderHomeStats(state);
+  renderCollectionToday(state);
+  renderPersonSelects(state);
+  renderPeopleList(state);
+  updatePayLoans(state);
+  updateCoverLoans(state);
+  updatePreLoanWarning(state);
+  handleLoanModeChange();
+}
+
+function renderHomeStats(state) {
+  const totalGiven = state.loans.reduce((s,l) => s + Number(l.principal||0), 0);
+  const totalOutstanding = state.loans
+    .filter(l => l.status === "ACTIVE")
+    .reduce((s,l) => s + Math.max(0, calcLoan(l).effectiveOutstanding), 0);
+  const totalPaid = state.loans.reduce((s,l) => {
+    return s + (l.payments||[]).reduce((ss,p) => ss + Number(p.amount||0), 0);
+  }, 0);
+  
+  document.getElementById('homeTotalGiven').textContent = rm(totalGiven);
+  document.getElementById('homeTotalOutstanding').textContent = rm(totalOutstanding);
+  document.getElementById('homeTotalPaid').textContent = rm(totalPaid);
+  document.getElementById('homeTotalPeople').textContent = String(state.people.length);
+}
+
+function renderCollectionToday(state) {
+  const win = currentCollectionWindow(new Date());
+  const yyyyMm = nowISODate().slice(0,7);
+  const hintEl = document.getElementById('homeCollectionHint');
+  const listEl = document.getElementById('homeCollectionList');
+
+  if (!win) {
+    hintEl.textContent = `Today is not a collection window.`;
+    listEl.innerHTML = `<div class="empty-state"><div class="icon">📅</div><div class="muted">No collections due today</div></div>`;
+    return;
+  }
+
+  hintEl.textContent = `Today (${nowISODate()}) → ${win} term collection`;
+
+  const dueLoans = state.loans
+    .filter(l => l.status === "ACTIVE")
+    .filter(l => (l.term || "MID") === win)
+    .filter(l => !hasPaymentInMonth(l, yyyyMm));
+
+  if (dueLoans.length === 0) {
+    listEl.innerHTML = `<div class="empty-state"><div class="icon">✅</div><div class="muted">All ${win} payments collected!</div></div>`;
+    return;
+  }
+
+  const rows = dueLoans.map(l => {
+    const person = state.people.find(p => p.id === l.personId);
+    const c = calcLoan(l);
+    const effOut = Math.max(0, c.effectiveOutstanding);
+    const remainingTimes = l.installmentAmount > 0 ? Math.ceil(effOut / l.installmentAmount) : 0;
+
+    return `
+      <div class="collection-item">
+        <div class="collection-item-name">${escapeHtml(person?.name || "Unknown")}</div>
+        <div class="muted">
+          Inst: ${rm(l.installmentAmount)} • Outstanding: ${rm(effOut)} • ${remainingTimes} time(s) left
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  listEl.innerHTML = rows;
+}
+
+function renderPersonSelects(state) {
+  const payEl = document.getElementById('payPerson');
+  const loanEl = document.getElementById('loanPerson');
+
+  const prevPay = payEl.value;
+  const prevLoan = loanEl.value;
+
+  const opts = state.people
+    .map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`)
+    .join("");
+
+  payEl.innerHTML = `<option value="">-- Select Person --</option>${opts}`;
+  loanEl.innerHTML = `<option value="">-- Select Person --</option>${opts}`;
+
+  if (prevPay && state.people.some(p => p.id === prevPay)) payEl.value = prevPay;
+  if (prevLoan && state.people.some(p => p.id === prevLoan)) loanEl.value = prevLoan;
+}
+
+function updatePayLoans(state) {
+  const pid = document.getElementById('payPerson').value;
+  const el = document.getElementById('payLoan');
+  
+  if (!pid) {
+    el.innerHTML = `<option value="">-- Select person first --</option>`;
+    return;
+  }
+
+  const loans = state.loans
+    .filter(l => l.personId === pid && l.status === "ACTIVE")
+    .sort((a,b) => (a.startDate||"").localeCompare(b.startDate||""));
+
+  if (loans.length === 0) {
+    el.innerHTML = `<option value="">-- No active loans --</option>`;
+    return;
+  }
+
+  const opts = loans.map(l => {
+    const c = calcLoan(l);
+    return `<option value="${l.id}">Loan ${l.id.slice(-4)} • ${escapeHtml(l.startDate)} • ${rm(Math.max(0,c.effectiveOutstanding))}</option>`;
+  }).join("");
+
+  el.innerHTML = opts;
+}
+
+function updateCoverLoans(state) {
+  const pid = document.getElementById('loanPerson').value;
+  const el = document.getElementById('coverLoan');
+  
+  if (!pid) {
+    el.innerHTML = `<option value="">-- Select person first --</option>`;
+    document.getElementById('coverLoanInfo').textContent = "";
+    return;
+  }
+  
+  const loans = state.loans.filter(l => l.personId === pid && l.status === "ACTIVE");
+  
+  if (loans.length === 0) {
+    el.innerHTML = `<option value="">-- No active loans --</option>`;
+    document.getElementById('coverLoanInfo').textContent = "";
+    return;
+  }
+  
+  el.innerHTML = loans.map(l => {
+    const c = calcLoan(l);
+    return `<option value="${l.id}">Loan ${l.id.slice(-4)} • ${rm(Math.max(0,c.effectiveOutstanding))}</option>`;
+  }).join("");
+  
+  updateCoverLoanInfo(state);
+}
+
+function updateCoverLoanInfo(state) {
+  const loanId = document.getElementById('coverLoan').value;
+  const el = document.getElementById('coverLoanInfo');
+  
+  if (!loanId) {
+    el.textContent = "";
+    return;
+  }
+  
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan) {
+    el.textContent = "";
+    return;
+  }
+  
+  const c = calcLoan(loan);
+  el.textContent = `Principal ${rm(c.principal)}, Paid ${rm(c.totalPaid)}, Outstanding ${rm(Math.max(0,c.effectiveOutstanding))}`;
+}
+
+function updatePreLoanWarning(state) {
+  const pid = document.getElementById('loanPerson').value;
+  const el = document.getElementById('preLoanWarning');
+  
+  if (!pid || document.getElementById('loanMode').value !== "NEW") {
+    el.style.display = "none";
+    return;
+  }
+  
+  const out = personOutstanding(state, pid);
+  if (out > 0) {
+    el.style.display = "block";
+    el.className = "alert warning";
+    el.innerHTML = `<div class="alert-title">⚠️ Warning</div><div class="muted">This person has outstanding ${rm(out)}</div>`;
+  } else {
+    el.style.display = "none";
+  }
+}
+
+function handleLoanModeChange() {
+  const mode = document.getElementById('loanMode').value;
+  document.getElementById('rolloverBox').style.display = (mode === "ROLLOVER") ? "block" : "none";
+}
+
+function renderPeopleList(state) {
+  const el = document.getElementById('peopleList');
+  
+  if (state.people.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">👥</div><div class="muted">No people added yet</div></div>`;
+    return;
+  }
+  
+  const rows = state.people.map(p => {
+    const activeLoans = state.loans.filter(l => l.personId === p.id && l.status === "ACTIVE");
+    const given = state.loans.filter(l => l.personId === p.id).reduce((s,l)=>s+Number(l.principal||0),0);
+    const outstanding = activeLoans.reduce((s,l)=>s+Math.max(0, calcLoan(l).effectiveOutstanding),0);
+    const paid = state.loans.filter(l => l.personId === p.id)
+      .reduce((s,l)=> s + (l.payments||[]).reduce((ss,pp)=>ss+Number(pp.amount||0),0), 0);
+
+    return `
+      <div class="person-item">
+        <div class="person-name">${escapeHtml(p.name)}</div>
+
+        <div class="flex">
+          <span class="pill primary">Given ${rm(given)}</span>
+          <span class="pill success">Paid ${rm(paid)}</span>
+          <span class="pill warning">Due ${rm(outstanding)}</span>
+        </div>
+
+        <div class="flex" style="margin-top:10px; justify-content: space-between;">
+          <span class="muted">Active loans: ${activeLoans.length}</span>
+
+          <div class="flex">
+            <button class="btn-secondary" data-open-person="${p.id}">
+              📂 Open
+            </button>
+            <button class="btn-danger" data-delete-person="${p.id}">
+              🗑 Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+  }).join("");
+  
+  el.innerHTML = rows;
+  
+  document.querySelectorAll('.person-item').forEach(item => {
+    item.addEventListener('click', () => openPersonDetail(item.dataset.person));
+  });
+
+  // Open person
+  document.querySelectorAll('[data-open-person]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openPersonDetail(btn.dataset.openPerson);
+    });
+  });
+
+  // Delete person
+  document.querySelectorAll('[data-delete-person]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      deletePerson(btn.dataset.deletePerson);
+    });
+  });
+}
+
+function openPersonDetail(personId) {
+  const state = loadState();
+  const person = state.people.find(p => p.id === personId);
+  if (!person) return;
+
+  const loans = state.loans.filter(l => l.personId === personId)
+    .sort((a,b) => (b.createdAt||"").localeCompare(a.createdAt||""));
+
+  const given = loans.reduce((s,l)=>s+Number(l.principal||0),0);
+  const paid = loans.reduce((s,l)=> s + (l.payments||[]).reduce((ss,pp)=>ss+Number(pp.amount||0),0), 0);
+  const outstanding = loans.filter(l=>l.status==="ACTIVE")
+    .reduce((s,l)=>s+Math.max(0, calcLoan(l).effectiveOutstanding),0);
+
+  document.getElementById('pdName').textContent = person.name;
+  document.getElementById('pdSummary').innerHTML = `
+    <span class="pill primary">Given ${rm(given)}</span>
+    <span class="pill success">Paid ${rm(paid)}</span>
+    <span class="pill warning">Outstanding ${rm(outstanding)}</span>
+    <span class="pill">Loans ${loans.length}</span>
+  `;
+  
+  document.getElementById('pdLoans').innerHTML = loans.map(l => renderLoanBlock(l)).join("");
+
+  // attach edit button handlers
+  document.querySelectorAll('[data-edit-loan]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openEditLoan(btn.dataset.editLoan);
+    });
+  });
+
+
+  lastView = document.querySelector('.view.active')?.id || 'viewPeople';
+  showView('viewPersonDetail');
+
+  document.querySelectorAll('[data-close-loan]').forEach(btn => {
+    btn.addEventListener('click', () => closeLoan(btn.dataset.closeLoan));
+  });
+
+  // Edit payment
+  document.querySelectorAll('[data-edit-payment]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [loanId, idx] = btn.dataset.editPayment.split('|');
+      openEditPayment(loanId, Number(idx));
+    });
+  });
+
+  // Delete payment
+  document.querySelectorAll('[data-delete-payment]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [loanId, idx] = btn.dataset.deletePayment.split('|');
+      deletePayment(loanId, Number(idx));
+    });
+  });
+}
+
+function renderLoanBlock(loan) {
+  const c = calcLoan(loan);
+  const effOut = Math.max(0, c.effectiveOutstanding);
+  const inst = Number(loan.installmentAmount || 0);
+  const remainingTimes = inst > 0 ? Math.ceil(effOut / inst) : 0;
+  
+  const payments = (loan.payments || []).slice().sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+  const payRows = payments.length ? payments.map((p, idx) => `
+    <tr>
+      <td>${escapeHtml(p.date)}</td>
+      <td>${escapeHtml(p.slot)}</td>
+      <td class="right">${rm(p.amount)}</td>
+      <td class="right">
+        <button class="btn-secondary" data-edit-payment="${loan.id}|${idx}">
+          ✏️
+        </button>
+        <button class="btn-danger" data-delete-payment="${loan.id}|${idx}">
+          🗑
+        </button>
+      </td>
+    </tr>
+  `).join("") : `
+    <tr>
+      <td colspan="4" class="muted">No payments yet</td>
+    </tr>
+  `;
+
+  const closeBtn = loan.status === "ACTIVE"
+    ? `<button class="btn-secondary" data-close-loan="${loan.id}">✅ Mark as Paid</button>`
+    : "";
+
+  const editBtn = `
+    <button class="btn-secondary" data-edit-loan="${loan.id}">
+      ✏️ Edit loan / payments
+    </button>
+  `;
+
+  const statusClass = loan.status === "ACTIVE" ? "" : "closed";
+
+  return `
+    <div class="loan-block ${statusClass}">
+      <div class="flex space-between">
+        <div>
+          <div style="font-weight: 700;">Loan ${loan.id.slice(-4)}</div>
+          <div class="muted">Start: ${escapeHtml(loan.startDate)}</div>
+        </div>
+        <div>
+          <span class="pill ${loan.status === 'ACTIVE' ? 'success' : ''}">${loan.status}</span>
+        </div>
+      </div>
+      
+      <div class="flex" style="margin-top: 12px;">
+        <span class="pill">Principal ${rm(c.principal)}</span>
+        <span class="pill success">Paid ${rm(c.totalPaid)}</span>
+        <span class="pill warning">Due ${rm(effOut)}</span>
+        <span class="pill">${remainingTimes} left</span>
+      </div>
+      
+      <div class="muted" style="margin-top: 8px;">
+        Inst: ${rm(loan.installmentAmount)} × ${c.effectiveTotalTimes} (${loan.plannedTimes} + ${c.missed} missed)
+      </div>
+
+      <div style="margin-top: 10px;" class="flex">
+        ${editBtn}
+        ${closeBtn}
+      </div>
+      
+      ${loan.notes ? `<div class="muted" style="margin-top: 6px;">📝 ${escapeHtml(loan.notes)}</div>` : ""}
+      
+      <table style="margin-top: 12px;">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Slot</th>
+          <th class="right">Amount</th>
+          <th class="right">Action</th>
+        </tr>
+      </thead>
+        <tbody>${payRows}</tbody>
+      </table>
+      
+      ${closeBtn}
+    </div>
+  `;
+}
+
+function closeLoan(loanId) {
+  const state = loadState();
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan || loan.status !== "ACTIVE") return;
+
+  if (!confirm('Mark this loan as fully paid?')) return;
+
+  loan.status = "CLOSED_PAID";
+  loan.closedAt = nowISODate();
+  loan.closeReason = "Closed manually as paid.";
+
+  saveState(state);
+  openPersonDetail(loan.personId);
+}
+
+function deletePerson(personId) {
+  const state = loadState();
+  const person = state.people.find(p => p.id === personId);
+  if (!person) return alert("Person not found");
+
+  const loans = state.loans.filter(l => l.personId === personId);
+  const activeLoans = loans.filter(l => l.status === "ACTIVE");
+
+  let message = `Delete ${person.name}?\n\n`;
+
+  if (loans.length > 0) {
+    message += `⚠️ This person has:\n`;
+    message += `• ${loans.length} total loan(s)\n`;
+    message += `• ${activeLoans.length} active loan(s)\n\n`;
+    message += `This will DELETE all loans and payments.\n\n`;
+  }
+
+  message += `This action CANNOT be undone.\n\nProceed?`;
+
+  const ok = confirm(message);
+  if (!ok) return;
+
+  // Remove person
+  state.people = state.people.filter(p => p.id !== personId);
+
+  // Remove all their loans
+  state.loans = state.loans.filter(l => l.personId !== personId);
+
+  saveState(state);
+
+  alert(`🗑 ${person.name} deleted`);
+  showView('viewPeople');
+}
+
+function openEditLoan(loanId) {
+  const state = loadState();
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan) return alert("Loan not found");
+
+  // === Edit loan fields ===
+  const principal = prompt("Principal (RM)", loan.principal);
+  if (principal === null) return;
+
+  const inst = prompt("Installment per time (RM)", loan.installmentAmount);
+  if (inst === null) return;
+
+  const planned = prompt("Planned times (installments)", loan.plannedTimes);
+  if (planned === null) return;
+
+  const missed = prompt("Already missed times", loan.alreadyMissedTimes || 0);
+  if (missed === null) return;
+
+  const term = prompt("Collection term (EARLY / MID)", loan.term || "MID");
+  if (term === null) return;
+
+  // === Validate ===
+  const p = Number(principal);
+  const i = Number(inst);
+  const t = Number(planned);
+  const m = Number(missed);
+  const termVal = term.toUpperCase();
+
+  if (!(p > 0)) return alert("Principal must be > 0");
+  if (!(i > 0)) return alert("Installment must be > 0");
+  if (!(t >= 1)) return alert("Planned times must be >= 1");
+  if (!(m >= 0)) return alert("Missed times must be >= 0");
+  if (!(termVal === "EARLY" || termVal === "MID")) {
+    return alert("Term must be EARLY or MID");
+  }
+
+  // === Save ===
+  loan.principal = p;
+  loan.installmentAmount = i;
+  loan.plannedTimes = t;
+  loan.alreadyMissedTimes = m;
+  loan.term = termVal;
+
+  saveState(state);
+
+  alert("✅ Loan updated");
+  openPersonDetail(loan.personId);
+}
+
+
+
+/** ======= Event Handlers ======= */
+document.getElementById('addPersonBtn').addEventListener('click', () => {
+  const name = (document.getElementById('personName').value || "").trim();
+  if (!name) {
+    alert("Please enter a name");
+    return;
+  }
+
+  const state = loadState();
+  if (state.people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    alert("This name already exists");
+    return;
+  }
+
+  const newPerson = {
+    id: uid("p"),
+    name,
+    createdAt: new Date().toISOString()
+  };
+
+  state.people.push(newPerson);
+  saveState(state);
+
+  document.getElementById('personName').value = "";
+
+  // ✅ IMPORTANT: refresh dropdowns
+  renderAll();
+
+  // ✅ go to Add Loan page
+  showView('viewAddLoan');
+
+  // ✅ auto-select this new person in Add Loan
+  document.getElementById('loanPerson').value = newPerson.id;
+});
+
+document.getElementById('addPaymentBtn').addEventListener('click', () => {
+  const state = loadState();
+  const personId = document.getElementById('payPerson').value;
+  const loanId = document.getElementById('payLoan').value;
+  const date = document.getElementById('payDate').value || nowISODate();
+  const amount = Number(document.getElementById('payAmount').value || 0);
+  const slot = document.getElementById('paySlot').value;
+
+  if (!personId) { alert("Select a person"); return; }
+  if (!loanId) { alert("Select a loan"); return; }
+  if (!date) { alert("Select a date"); return; }
+  if (!(amount > 0)) { alert("Enter amount > 0"); return; }
+
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan || loan.status !== "ACTIVE") {
+    alert("Loan not found or not active");
+    return;
+  }
+
+  const activeLoansSorted = state.loans
+    .filter(l => l.personId === personId && l.status === "ACTIVE")
+    .sort((a,b) => (a.startDate||"").localeCompare(b.startDate||""));
+
+  const oldestOutstanding = activeLoansSorted.find(l => Math.max(0, calcLoan(l).effectiveOutstanding) > 0);
+
+  if (oldestOutstanding && oldestOutstanding.id !== loanId) {
+    const ok = confirm(
+      `This person has an older outstanding loan.\n\n` +
+      `Oldest: Loan ${oldestOutstanding.id.slice(-4)} (${oldestOutstanding.startDate})\n` +
+      `Selected: Loan ${loanId.slice(-4)} (${loan.startDate})\n\n` +
+      `Continue with newer loan?`
+    );
+    if (!ok) return;
+  }
+
+  loan.payments = loan.payments || [];
+  loan.payments.push({ id: uid("pay"), date, amount, slot, note: "" });
+
+  saveState(state);
+  document.getElementById('payAmount').value = "";
+  alert("✅ Payment recorded!");
+  showView('viewHome');
+});
+
+document.getElementById('addLoanBtn').addEventListener('click', () => {
+  const state = loadState();
+  const personId = document.getElementById('loanPerson').value;
+  const mode = document.getElementById('loanMode').value;
+  const startDate = document.getElementById('loanStartDate').value || nowISODate();
+  const principal = Number(document.getElementById('loanPrincipal').value || 0);
+  const installmentAmount = Number(document.getElementById('loanInstAmount').value || 0);
+  const plannedTimes = Number(document.getElementById('loanPlannedTimes').value || 0);
+  const notes = (document.getElementById('loanNotes').value || "").trim();
+  const alreadyPaidTimes = Number(document.getElementById('loanAlreadyPaidTimes').value || 0);
+  const migrationNote = (document.getElementById('loanMigrationNote').value || "").trim();
+  const alreadyMissedTimes = Number(document.getElementById('loanAlreadyMissedTimes').value || 0);
+  const trackingStartDate = (document.getElementById('loanTrackingStartDate').value || nowISODate());
+  const term = document.getElementById('loanTerm').value || "MID";
+
+  if (!personId) { alert("Select a person"); return; }
+  if (!startDate) { alert("Select a start date"); return; }
+  if (!(principal > 0)) { alert("Enter principal > 0"); return; }
+  if (!(installmentAmount > 0)) { alert("Enter installment > 0"); return; }
+  if (!(plannedTimes >= 1)) { alert("Enter planned times >= 1"); return; }
+  const effectiveTotalTimes = plannedTimes + alreadyMissedTimes;
+
+  if (alreadyPaidTimes < 0) {
+    alert("Already paid times cannot be negative");
+    return;
+  }
+  if (alreadyPaidTimes > effectiveTotalTimes) {
+    alert(`Already paid times cannot exceed planned + missed (${effectiveTotalTimes})`);
+    return;
+  }
+
+  const initialPayments = [];
+  for (let i = 0; i < alreadyPaidTimes; i++) {
+    initialPayments.push({
+      id: uid("pay"),
+      date: startDate,
+      amount: installmentAmount,
+      slot: "MIGRATION",
+      note: migrationNote || `Migrated payment ${i + 1}/${alreadyPaidTimes}`
+    });
+  }
+
+  if (mode === "NEW") {
+    const out = personOutstanding(state, personId);
+    if (out > 0) {
+      const proceed = confirm(`This person has outstanding ${rm(out)}.\n\nProceed?`);
+      if (!proceed) return;
+
+      const accountsCount = prompt("How many accounts they have?");
+      if (!accountsCount || !accountsCount.trim()) {
+        alert("Accounts count required");
+        return;
+      }
+      const mergedNotes = `Accounts: ${accountsCount.trim()}${notes ? " | " + notes : ""}`;
+
+      state.loans.push({
+        id: uid("l"),
+        personId,
+        startDate,
+        principal,
+        installmentAmount,
+        plannedTimes,
+        term,
+        alreadyMissedTimes,
+        trackingStartDate,
+        payments: initialPayments,
+        status: "ACTIVE",
+        createdAt: new Date().toISOString(),
+        notes: mergedNotes,
+        coveredLoanIds: []
+      });
+    } else {
+      state.loans.push({
+        id: uid("l"),
+        personId,
+        startDate,
+        principal,
+        installmentAmount,
+        plannedTimes,
+        term,
+        alreadyMissedTimes,
+        trackingStartDate,
+        payments: initialPayments,
+        status: "ACTIVE",
+        createdAt: new Date().toISOString(),
+        notes,
+        coveredLoanIds: []
+      });
+    }
+  }
+
+  if (mode === "ROLLOVER") {
+    const oldLoanId = document.getElementById('coverLoan').value;
+    const oldLoan = state.loans.find(l => l.id === oldLoanId);
+    if (!oldLoan || oldLoan.status !== "ACTIVE") {
+      alert("Select an active old loan");
+      return;
+    }
+
+    const cOld = calcLoan(oldLoan);
+    const payoff = Math.max(0, cOld.effectiveOutstanding);
+    const cashOut = principal - payoff;
+
+    const ok = confirm(
+      `Rollover:\n` +
+      `Old outstanding: ${rm(payoff)}\n` +
+      `New principal: ${rm(principal)}\n` +
+      `Cash out: ${rm(cashOut)}\n\n` +
+      `Proceed?`
+    );
+    if (!ok) return;
+
+    oldLoan.payments = oldLoan.payments || [];
+    if (payoff > 0) {
+      oldLoan.payments.push({
+        id: uid("pay"),
+        date: startDate,
+        amount: payoff,
+        slot: "ROLLOVER",
+        note: "Covered by new loan"
+      });
+    }
+    oldLoan.status = "CLOSED_ROLLOVER";
+    oldLoan.closedAt = startDate;
+    oldLoan.closeReason = "Paid in full (Covered by new loan)";
+
+    state.loans.push({
+      id: uid("l"),
+      personId,
+      startDate,
+      principal,
+      installmentAmount,
+      plannedTimes,
+      term,
+      alreadyMissedTimes,
+      trackingStartDate,
+      payments: initialPayments,
+      status: "ACTIVE",
+      createdAt: new Date().toISOString(),
+      notes: notes || "Rollover loan",
+      coveredLoanIds: [oldLoan.id]
+    });
+  }
+
+  saveState(state);
+
+  // Clear form
+  document.getElementById('loanPrincipal').value = "";
+  document.getElementById('loanInstAmount').value = "";
+  document.getElementById('loanPlannedTimes').value = "";
+  document.getElementById('loanNotes').value = "";
+  document.getElementById('loanAlreadyPaidTimes').value = "";
+  document.getElementById('loanMigrationNote').value = "";
+  document.getElementById('loanAlreadyMissedTimes').value = "";
+
+  alert("✅ Loan saved!");
+  showView('viewHome');
+});
+
+document.getElementById('resetDataBtn').addEventListener('click', () => {
+  if (!confirm("Reset ALL data? This cannot be undone!")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  alert("✅ All data cleared");
+  showView('viewHome');
+});
+
+document.getElementById('exportDataBtn').addEventListener('click', () => {
+  const state = loadState();
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `loan-tracker-backup-${nowISODate()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert("✅ Data exported!");
+});
+
+// Bottom nav
+document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => showView(btn.dataset.view));
+});
+
+// Quick action buttons
+document.getElementById('navAddLoan').addEventListener('click', () => showView('viewAddLoan'));
+document.getElementById('navCollect').addEventListener('click', () => showView('viewCollect'));
+document.getElementById('navPeople').addEventListener('click', () => showView('viewPeople'));
+document.getElementById('navSettings').addEventListener('click', () => showView('viewSettings'));
+
+// People page "+ Add" button → go to Add Loan page and focus name
+document.getElementById('btnAddPersonModal')?.addEventListener('click', () => {
+  showView('viewAddLoan');
+  setTimeout(() => document.getElementById('personName')?.focus(), 50);
+});
+// Person detail "Back" button
+document.getElementById('closePersonDetail').addEventListener('click', () => {
+  showView(lastView || 'viewPeople');
+});
+
+// Form change handlers
+document.getElementById('payPerson').addEventListener('change', () => {
+  updatePayLoans(loadState());
+});
+
+document.getElementById('loanPerson').addEventListener('change', () => {
+  const state = loadState();
+  updatePayLoans(state);
+  updateCoverLoans(state);
+  updatePreLoanWarning(state);
+});
+
+document.getElementById('loanMode').addEventListener('change', () => {
+  handleLoanModeChange();
+  updateCoverLoans(loadState());
+  updatePreLoanWarning(loadState());
+});
+
+document.getElementById('coverLoan').addEventListener('change', () => {
+  updateCoverLoanInfo(loadState());
+});
+
+// Set default dates
+document.getElementById('payDate').value = nowISODate();
+document.getElementById('loanStartDate').value = nowISODate();
+document.getElementById('loanTrackingStartDate').value = nowISODate();
+
+function openEditPayment(loanId, paymentIndex) {
+  const state = loadState();
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan || !loan.payments || !loan.payments[paymentIndex]) {
+    return alert("Payment not found");
+  }
+
+  const payment = loan.payments[paymentIndex];
+
+  const newDate = prompt("Payment date (YYYY-MM-DD)", payment.date);
+  if (newDate === null) return;
+
+  const newAmount = prompt("Payment amount (RM)", payment.amount);
+  if (newAmount === null) return;
+
+  const newSlot = prompt("Slot (EARLY / MID)", payment.slot);
+  if (newSlot === null) return;
+
+  const amount = Number(newAmount);
+  const slot = String(newSlot).toUpperCase();
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+    return alert("Invalid date format. Example: 2025-12-31");
+  }
+  if (!(amount > 0)) {
+    return alert("Amount must be > 0");
+  }
+  // allow existing system slots too
+  if (!["EARLY","MID","MIGRATION","ROLLOVER"].includes(slot)) {
+    return alert("Invalid slot. Use EARLY or MID");
+  }
+
+  payment.date = newDate;
+  payment.amount = amount;
+  payment.slot = slot;
+
+  saveState(state);
+  alert("✅ Payment updated");
+  openPersonDetail(loan.personId);
+}
+
+function deletePayment(loanId, paymentIndex) {
+  const state = loadState();
+  const loan = state.loans.find(l => l.id === loanId);
+  if (!loan || !loan.payments || !loan.payments[paymentIndex]) {
+    return alert("Payment not found");
+  }
+
+  const payment = loan.payments[paymentIndex];
+
+  const ok = confirm(
+    `Delete this payment?\n\n` +
+    `Date: ${payment.date}\n` +
+    `Amount: ${rm(payment.amount)}\n` +
+    `Slot: ${payment.slot}\n\n` +
+    `This cannot be undone.`
+  );
+  if (!ok) return;
+
+  loan.payments.splice(paymentIndex, 1);
+  saveState(state);
+
+  alert("🗑 Payment deleted");
+  openPersonDetail(loan.personId);
+}
+
+// Initialize
+renderAll();
+showView('viewHome');
+</script>
+</body>
+</html>
