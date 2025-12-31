@@ -1302,11 +1302,9 @@ function deletePerson(personId) {
   state.loans = state.loans.filter(l => l.personId !== personId);
 
   saveState(state);
-
   renderAll();
   showView('viewPeople');
   alert(`🗑 ${person.name} deleted`);
-  showView('viewPeople');
 }
 
 function openEditLoan(loanId) {
