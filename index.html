@@ -507,7 +507,21 @@
     }
 
     .row > div { min-width: 0; }
-    input[type="date"]{ font-size: 14px; text-align:left; }
+    input[type="date"] {
+      font-size: 15px;
+      text-align: left;
+      height: auto;
+      min-height: 44px;
+      -webkit-appearance: none;
+      appearance: none;
+      line-height: 1.5;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 1;
+      cursor: pointer;
+      padding: 4px;
+    }
 
     @media (max-width: 420px) {
       .row.row-date-amount {
