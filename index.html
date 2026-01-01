@@ -650,14 +650,6 @@
           </div>
         </div>
 
-      <!-- Add Person Card -->
-      <div class="card">
-        <div class="card-title">👤 Add New Person</div>
-        <label>Name</label>
-        <input id="personName" placeholder="e.g. Ali" />
-        <button class="btn-primary" id="addPersonBtn">Add Person</button>
-      </div>
-
         <div id="rolloverBox" style="display:none;">
           <div class="alert warning">
             <div class="alert-title">🔄 Rollover Mode</div>
@@ -714,6 +706,14 @@
         <div id="preLoanWarning" style="display:none;"></div>
 
         <button class="btn-primary" id="addLoanBtn">💾 Save Loan</button>
+      </div>
+
+      <!-- Add Person Card -->
+      <div class="card">
+        <div class="card-title">👤 Add New Person</div>
+        <label>Name</label>
+        <input id="personName" placeholder="e.g. Ali" />
+        <button class="btn-primary" id="addPersonBtn">Add Person</button>
       </div>
     </div>
 
@@ -866,6 +866,82 @@ function hasPaymentInMonth(loan, yyyyMm) {
   return (loan.payments || []).some(p => (p.date || "").slice(0,7) === yyyyMm);
 }
 
+function getNextDueDate(loan, today = new Date()) {
+  if (loan.status !== "ACTIVE") return null;
+  
+  const term = loan.term || "MID";
+  const todayStr = today.toISOString().slice(0, 10);
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1; // 1-12
+  const currentDay = today.getDate();
+  
+  // Determine collection window dates
+  const getWindowDates = (year, month, termType) => {
+    if (termType === "EARLY") {
+      return { start: 7, end: 15 };
+    } else { // MID
+      return { start: 22, end: 29 };
+    }
+  };
+  
+  // Check if payment already made this month
+  const currentMonthKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+  const hasPaymentThisMonth = hasPaymentInMonth(loan, currentMonthKey);
+  
+  const window = getWindowDates(currentYear, currentMonth, term);
+  
+  // If we're in the current window and no payment yet, due date is end of current window
+  if (!hasPaymentThisMonth) {
+    const inWindow = (term === "EARLY" && currentDay >= 7 && currentDay <= 15) ||
+                     (term === "MID" && currentDay >= 22 && currentDay <= 29);
+    
+    if (inWindow) {
+      // Return the end date of current window
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+      const endDay = Math.min(window.end, daysInMonth);
+      return `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+    }
+    
+    // If we're past the window, next due is next month
+    if ((term === "EARLY" && currentDay > 15) || (term === "MID" && currentDay > 29)) {
+      let nextMonth = currentMonth + 1;
+      let nextYear = currentYear;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear++;
+      }
+      const nextWindow = getWindowDates(nextYear, nextMonth, term);
+      const daysInNextMonth = new Date(nextYear, nextMonth, 0).getDate();
+      const endDay = Math.min(nextWindow.end, daysInNextMonth);
+      return `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+    }
+    
+    // If we're before the window, due date is end of current month's window
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const endDay = Math.min(window.end, daysInMonth);
+    return `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+  }
+  
+  // Payment already made this month, next due is next month
+  let nextMonth = currentMonth + 1;
+  let nextYear = currentYear;
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear++;
+  }
+  const nextWindow = getWindowDates(nextYear, nextMonth, term);
+  const daysInNextMonth = new Date(nextYear, nextMonth, 0).getDate();
+  const endDay = Math.min(nextWindow.end, daysInNextMonth);
+  return `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+}
+
+function formatDateDisplay(dateStr) {
+  if (!dateStr) return "N/A";
+  const date = new Date(dateStr + "T00:00:00");
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
 /** ======= View Management ======= */
 function showView(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -938,11 +1014,13 @@ function renderCollectionToday(state) {
     const effOut = Math.max(0, c.effectiveOutstanding);
     const remainingTimes = l.installmentAmount > 0 ? Math.ceil(effOut / l.installmentAmount) : 0;
 
+    const nextDue = getNextDueDate(l);
     return `
       <div class="collection-item">
         <div class="collection-item-name">${escapeHtml(person?.name || "Unknown")}</div>
         <div class="muted">
           Inst: ${rm(l.installmentAmount)} • Outstanding: ${rm(effOut)} • ${remainingTimes} time(s) left
+          ${nextDue ? ` • Next due: <strong>${formatDateDisplay(nextDue)}</strong>` : ""}
         </div>
       </div>
     `;
@@ -1107,10 +1185,6 @@ function renderPeopleList(state) {
   }).join("");
   
   el.innerHTML = rows;
-  
-  document.querySelectorAll('.person-item').forEach(item => {
-    item.addEventListener('click', () => openPersonDetail(item.dataset.person));
-  });
 
   // Open person
   document.querySelectorAll('[data-open-person]').forEach(btn => {
@@ -1220,6 +1294,8 @@ function renderLoanBlock(loan) {
   `;
 
   const statusClass = loan.status === "ACTIVE" ? "" : "closed";
+  const nextDue = loan.status === "ACTIVE" ? getNextDueDate(loan) : null;
+  const nextDueDisplay = nextDue ? `<div class="muted" style="margin-top: 6px;">📅 Next due: <strong>${formatDateDisplay(nextDue)}</strong></div>` : "";
 
   return `
     <div class="loan-block ${statusClass}">
@@ -1243,6 +1319,8 @@ function renderLoanBlock(loan) {
       <div class="muted" style="margin-top: 8px;">
         Inst: ${rm(loan.installmentAmount)} × ${c.effectiveTotalTimes} (${loan.plannedTimes} + ${c.missed} missed)
       </div>
+      
+      ${nextDueDisplay}
 
       <div style="margin-top: 10px;" class="flex">
         ${editBtn}
@@ -1262,8 +1340,6 @@ function renderLoanBlock(loan) {
       </thead>
         <tbody>${payRows}</tbody>
       </table>
-      
-      ${closeBtn}
     </div>
   `;
 }
